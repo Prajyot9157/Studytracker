@@ -15,28 +15,35 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#070b16;--text:#e6ebf5;--text-dim:#93a0bd;--text-faint:#5f6b86;
-  --glass:rgba(255,255,255,0.045);--glass-2:rgba(255,255,255,0.075);
+  --glass:rgba(255,255,255,0.06);--glass-2:rgba(255,255,255,0.09);
   --border:rgba(255,255,255,0.09);--border-2:rgba(255,255,255,0.16);
-  --shadow:0 10px 30px rgba(0,0,0,0.35);
+  --shadow:0 6px 18px rgba(0,0,0,0.28);
+  --panel:#0d1526;
   --accent:#6c8cff;--accent-2:#a78bfa;--green:#4fd1a5;--red:#ff6b6b;--yellow:#fbbf24;
-  --topbar:rgba(7,11,22,0.72);--radius:18px;--radius-sm:12px;--sidebar-w:252px;
+  --topbar:rgba(7,11,22,0.96);--sidebar-bg:rgba(8,13,24,0.97);
+  --radius:18px;--radius-sm:12px;--sidebar-w:252px;
   --font:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
 }
 [data-theme="light"]{
   --bg:#eef2fb;--text:#121a2b;--text-dim:#4c5876;--text-faint:#7d88a4;
-  --glass:rgba(255,255,255,0.62);--glass-2:rgba(255,255,255,0.85);
+  --glass:rgba(255,255,255,0.80);--glass-2:rgba(255,255,255,0.92);
   --border:rgba(20,35,70,0.08);--border-2:rgba(20,35,70,0.16);
-  --shadow:0 10px 30px rgba(30,50,100,0.10);--topbar:rgba(238,242,251,0.75);
+  --shadow:0 6px 18px rgba(30,50,100,0.08);
+  --panel:#ffffff;
+  --topbar:rgba(238,242,251,0.96);--sidebar-bg:rgba(248,250,255,0.97);
 }
-html{scroll-behavior:smooth}
-body{font-family:var(--font);color:var(--text);background-color:var(--bg);
+html{scroll-behavior:smooth;background-color:var(--bg)}
+body{font-family:var(--font);color:var(--text);min-height:100vh;
+  -webkit-font-smoothing:antialiased;line-height:1.5}
+/* Fixed gradient layer — painted once by the compositor, no repaint on scroll */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   background-image:
     radial-gradient(900px 500px at 8% -8%, rgba(108,140,255,0.20), transparent 60%),
     radial-gradient(800px 500px at 100% 0%, rgba(167,139,250,0.18), transparent 55%),
     radial-gradient(900px 600px at 60% 110%, rgba(79,209,165,0.14), transparent 60%);
-  background-attachment:fixed;min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;
 }
-[data-theme="light"] body{
+[data-theme="light"] body::before{
   background-image:
     radial-gradient(900px 500px at 8% -8%, rgba(108,140,255,0.18), transparent 60%),
     radial-gradient(800px 500px at 100% 0%, rgba(167,139,250,0.16), transparent 55%),
@@ -54,14 +61,15 @@ body:not(.logged-out) .login-screen{display:none !important}
 
 /* ---------- LOGIN SCREEN ---------- */
 .login-screen{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
-.login-card{width:100%;max-width:480px;background:var(--glass);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+.login-card{width:100%;max-width:480px;background:var(--panel);
   border:1px solid var(--border);border-radius:26px;padding:36px 28px 28px;text-align:center;box-shadow:var(--shadow);
-  animation:loginIn .45s cubic-bezier(.2,.8,.2,1)}
+  animation:loginIn .35s cubic-bezier(.2,.8,.2,1)}
 @keyframes loginIn{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
 .login-logo{width:76px;height:76px;margin:0 auto 16px;border-radius:22px;display:grid;place-items:center;font-size:38px;
   background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 12px 32px rgba(108,140,255,0.42);
   animation:pulse 3s ease-in-out infinite}
-@keyframes pulse{0%,100%{box-shadow:0 12px 32px rgba(108,140,255,0.42)}50%{box-shadow:0 14px 42px rgba(167,139,250,0.55)}}
+/* transform/opacity only — GPU composited, no repaint */
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.035);opacity:.94}}
 .login-title{font-size:24px;font-weight:800;letter-spacing:-.6px;margin-bottom:5px}
 .login-sub{font-size:13px;color:var(--text-dim);margin-bottom:22px}
 .login-divider{height:1px;background:var(--border);margin:0 0 22px}
@@ -69,8 +77,8 @@ body:not(.logged-out) .login-screen{display:none !important}
 .user-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-bottom:20px;max-height:340px;overflow-y:auto;padding:2px}
 .user-card{display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 12px;
   background:var(--glass-2);border:1px solid var(--border);border-radius:16px;
-  transition:transform .2s,border-color .2s,background .2s,box-shadow .2s;cursor:pointer;text-align:center}
-.user-card:hover{transform:translateY(-3px);border-color:var(--border-2);background:var(--glass);box-shadow:0 10px 24px rgba(108,140,255,0.18)}
+  transition:transform .2s,border-color .2s,background .2s;cursor:pointer;text-align:center}
+.user-card:hover{transform:translateY(-3px);border-color:var(--border-2);background:var(--glass)}
 .user-card:active{transform:scale(.97)}
 .user-card.loading{pointer-events:none;opacity:.6}
 .user-avatar-big{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-size:24px;font-weight:800;color:#fff;
@@ -85,22 +93,20 @@ body:not(.logged-out) .login-screen{display:none !important}
 .login-msg button{margin-top:10px;color:var(--accent);font-weight:700;font-size:12px;text-decoration:underline}
 .login-msg .help-link{display:inline-block;margin-top:8px;font-size:11.5px;color:var(--accent);text-decoration:underline}
 .login-msg code{background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px;font-size:11px;color:var(--text)}
-.login-skeleton{height:112px;border-radius:16px;
-  background:linear-gradient(90deg,var(--glass-2) 25%,var(--border-2) 50%,var(--glass-2) 75%);
-  background-size:200% 100%;animation:shimmer 1.4s infinite}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.login-skeleton{height:112px;border-radius:16px;background:var(--glass-2);animation:shimmer 1.2s ease-in-out infinite}
+@keyframes shimmer{0%,100%{opacity:.45}50%{opacity:.9}}
 .offline-banner{background:rgba(108,140,255,0.12);border:1px solid rgba(108,140,255,0.28);border-radius:12px;
   padding:10px 14px;font-size:12px;color:var(--text-dim);margin-bottom:16px;display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap}
 .offline-banner button{color:var(--accent);font-weight:700;font-size:11.5px;text-decoration:underline}
 
 /* ---------- MODAL ---------- */
-.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.68);
   z-index:600;align-items:center;justify-content:center;padding:20px}
-.modal-backdrop.show{display:flex;animation:modalIn .25s ease}
+.modal-backdrop.show{display:flex;animation:modalIn .2s ease}
 @keyframes modalIn{from{opacity:0}to{opacity:1}}
-.modal{width:100%;max-width:390px;background:var(--glass);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+.modal{width:100%;max-width:390px;background:var(--panel);
   border:1px solid var(--border-2);border-radius:22px;padding:26px;box-shadow:var(--shadow);
-  animation:modalPop .3s cubic-bezier(.2,.8,.2,1)}
+  animation:modalPop .25s cubic-bezier(.2,.8,.2,1)}
 @keyframes modalPop{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:none}}
 .modal h3{font-size:19px;font-weight:800;margin-bottom:6px;letter-spacing:-.3px}
 .modal p{font-size:12.5px;color:var(--text-dim);margin-bottom:16px}
@@ -109,9 +115,10 @@ body:not(.logged-out) .login-screen{display:none !important}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end}
 
 /* ---------- SIDEBAR ---------- */
-.sidebar{position:fixed;inset:0 auto 0 0;width:var(--sidebar-w);background:var(--glass);
-  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-right:1px solid var(--border);
-  display:flex;flex-direction:column;padding:20px 14px;z-index:70;overflow-y:auto;transition:transform .3s ease}
+.sidebar{position:fixed;inset:0 auto 0 0;width:var(--sidebar-w);background:var(--sidebar-bg);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:20px 14px;z-index:70;overflow-y:auto;
+  transition:transform .28s ease;will-change:transform}
 .brand{display:flex;align-items:center;gap:11px;padding:4px 6px 18px;border-bottom:1px solid var(--border);margin-bottom:14px}
 .user-avatar{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:18px;font-weight:800;color:#fff;
   flex-shrink:0;box-shadow:0 6px 16px rgba(0,0,0,0.28);position:relative}
@@ -123,7 +130,7 @@ body:not(.logged-out) .login-screen{display:none !important}
 .nav{display:flex;flex-direction:column;gap:3px;flex:1}
 .nav-section{font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:var(--text-faint);font-weight:700;margin:14px 10px 6px}
 .nav-item{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:11px;color:var(--text-dim);
-  font-size:13.5px;font-weight:500;text-align:left;width:100%;transition:background .18s,color .18s,transform .12s}
+  font-size:13.5px;font-weight:500;text-align:left;width:100%;transition:background .18s,color .18s}
 .nav-item:hover{background:var(--glass-2);color:var(--text)}
 .nav-item.active{background:linear-gradient(135deg,rgba(108,140,255,0.22),rgba(167,139,250,0.14));color:var(--text);font-weight:700;
   box-shadow:inset 0 0 0 1px rgba(108,140,255,0.28)}
@@ -148,17 +155,17 @@ body:not(.logged-out) .login-screen{display:none !important}
 /* ---------- MAIN ---------- */
 .main{margin-left:var(--sidebar-w);min-height:100vh;display:flex;flex-direction:column}
 .topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;padding:13px 26px;
-  background:var(--topbar);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+  background:var(--topbar);border-bottom:1px solid var(--border)}
 .topbar-title{font-size:17px;font-weight:800;letter-spacing:-.3px}
 .topbar-actions{margin-left:auto;display:flex;gap:9px}
 .hamburger{display:none;width:38px;height:38px;border-radius:10px;background:var(--glass-2);border:1px solid var(--border);font-size:17px;place-items:center}
 .icon-btn{width:38px;height:38px;border-radius:11px;background:var(--glass-2);border:1px solid var(--border);display:grid;place-items:center;
-  font-size:16px;transition:.18s}
+  font-size:16px;transition:background .18s,transform .18s}
 .icon-btn:hover{background:var(--glass);transform:translateY(-1px)}
 .icon-btn.sm{width:30px;height:30px;font-size:13px;border-radius:8px}
 .icon-btn.danger:hover{background:rgba(255,107,107,0.14);color:var(--red)}
 .view{padding:24px 28px 70px;width:100%;max-width:1420px;margin:0 auto}
-.scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:65;opacity:0;pointer-events:none;transition:opacity .3s}
+.scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:65;opacity:0;pointer-events:none;transition:opacity .28s}
 body.sidebar-open .scrim{opacity:1;pointer-events:auto}
 
 /* ---------- COMMON ---------- */
@@ -166,15 +173,14 @@ body.sidebar-open .scrim{opacity:1;pointer-events:auto}
 .page-title{font-size:24px;font-weight:800;letter-spacing:-.6px;display:flex;align-items:center;gap:10px}
 .page-icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px}
 .page-sub{font-size:13px;color:var(--text-dim);margin-top:4px}
-.card{background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);padding:18px;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:var(--shadow)}
+.card{background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
 .card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
 .card-head h3{font-size:15px;font-weight:700;letter-spacing:-.2px}
 .muted{color:var(--text-faint);font-size:12px}
 .empty{text-align:center;color:var(--text-faint);font-size:13px;padding:24px 10px}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border-radius:11px;font-size:13.5px;font-weight:600;
-  border:1px solid var(--border);background:var(--glass-2);color:var(--text);transition:transform .12s,background .18s,box-shadow .18s}
+  border:1px solid var(--border);background:var(--glass-2);color:var(--text);transition:transform .12s,background .18s}
 .btn:hover{background:var(--glass);transform:translateY(-1px)}
 .btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
@@ -182,7 +188,7 @@ body.sidebar-open .scrim{opacity:1;pointer-events:auto}
   box-shadow:0 8px 20px rgba(108,140,255,0.32)}
 .btn.danger{color:var(--red);border-color:rgba(255,107,107,0.3);background:rgba(255,107,107,0.1)}
 .input{background:var(--glass-2);border:1px solid var(--border);border-radius:11px;padding:10px 13px;color:var(--text);
-  outline:none;transition:.18s;width:100%}
+  outline:none;transition:border-color .18s,box-shadow .18s;width:100%}
 .input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,140,255,0.16)}
 textarea.input{resize:vertical;min-height:70px;line-height:1.55}
 select.input{cursor:pointer}
@@ -190,11 +196,10 @@ select.input{cursor:pointer}
 /* ---------- STAT ---------- */
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:13px;margin-bottom:18px}
 .stat-card{position:relative;background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);
-  padding:15px 15px 13px;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+  padding:15px 15px 13px;overflow:hidden;transition:transform .18s,border-color .18s}
 .stat-card::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;
   background:linear-gradient(90deg,var(--accent),var(--accent-2));opacity:.85}
-.stat-card:hover{transform:translateY(-3px);border-color:var(--border-2);box-shadow:var(--shadow)}
+.stat-card:hover{transform:translateY(-3px);border-color:var(--border-2)}
 .stat-icon{font-size:20px;margin-bottom:7px}
 .stat-value{font-size:23px;font-weight:800;letter-spacing:-.6px;line-height:1.15;word-break:break-word}
 .stat-label{font-size:12px;color:var(--text-dim);margin-top:3px;font-weight:500}
@@ -203,7 +208,7 @@ select.input{cursor:pointer}
 /* ---------- PROGRESS ---------- */
 .progress-track{height:9px;background:var(--glass-2);border:1px solid var(--border);border-radius:6px;overflow:hidden}
 .progress-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--accent-2));
-  transition:width .7s cubic-bezier(.2,.8,.2,1)}
+  transition:width .35s cubic-bezier(.2,.8,.2,1)}
 
 /* ---------- MISC PAGES ---------- */
 .focus-list{display:flex;flex-direction:column;gap:8px}
@@ -227,7 +232,7 @@ select.input{cursor:pointer}
 .toolbar .search{flex:1;min-width:180px}
 .toolbar .filter{width:auto;min-width:160px}
 .chapter{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:10px;
-  transition:border-color .2s,background .2s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  transition:border-color .18s}
 .chapter:hover{border-color:var(--border-2)}
 .ch-top{display:flex;align-items:center;gap:12px}
 .ch-num{width:31px;height:31px;border-radius:9px;display:grid;place-items:center;font-size:12px;font-weight:700;
@@ -237,7 +242,7 @@ select.input{cursor:pointer}
   font-size:12px;font-weight:600;cursor:pointer;outline:none;min-width:130px}
 .ch-bottom{display:flex;align-items:center;gap:8px;margin-top:10px;padding-left:43px;flex-wrap:wrap}
 .rev{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text-dim);cursor:pointer;padding:4px 9px;border-radius:8px;
-  background:var(--glass-2);border:1px solid var(--border);font-weight:600;transition:.15s}
+  background:var(--glass-2);border:1px solid var(--border);font-weight:600;transition:border-color .15s}
 .rev:hover{border-color:var(--border-2)}
 .rev input{accent-color:var(--accent);width:13px;height:13px;cursor:pointer;margin:0}
 .notes-btn{margin-left:auto;font-size:11.5px;color:var(--text-dim);padding:5px 11px;border-radius:8px;
@@ -252,12 +257,12 @@ select.input{cursor:pointer}
 .goal-form .input{width:auto}
 .goal-form input[type=date]{min-width:150px}
 .goal{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;
-  background:var(--glass-2);border:1px solid var(--border);margin-bottom:9px;transition:.18s}
+  background:var(--glass-2);border:1px solid var(--border);margin-bottom:9px;transition:border-color .18s}
 .goal:hover{border-color:var(--border-2)}
 .goal.done{opacity:.6}
 .goal.done .goal-text{text-decoration:line-through}
 .goal-check{width:24px;height:24px;border-radius:50%;border:1.6px solid var(--border-2);display:grid;place-items:center;
-  font-size:12px;font-weight:800;color:#fff;flex-shrink:0;transition:.18s}
+  font-size:12px;font-weight:800;color:#fff;flex-shrink:0;transition:background .18s,border-color .18s}
 .goal.done .goal-check{background:linear-gradient(135deg,var(--green),#3cb98f);border-color:transparent}
 .goal-check:hover{border-color:var(--accent)}
 .goal-text{flex:1;font-size:13.5px;font-weight:500;min-width:0;word-break:break-word}
@@ -274,7 +279,7 @@ select.input{cursor:pointer}
   padding:3px 8px;border-radius:7px;background:var(--glass-2);border:1px solid var(--border);cursor:pointer;font-weight:600}
 .rev-checks input{accent-color:var(--accent);width:12px;height:12px;cursor:pointer;margin:0}
 .heatmap{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin-top:6px}
-.heat-cell{aspect-ratio:1/1;border-radius:7px;background:var(--glass-2);border:1px solid var(--border);transition:.2s}
+.heat-cell{aspect-ratio:1/1;border-radius:7px;background:var(--glass-2);border:1px solid var(--border)}
 .heat-cell.l1{background:rgba(108,140,255,0.28);border-color:rgba(108,140,255,0.3)}
 .heat-cell.l2{background:rgba(108,140,255,0.5);border-color:rgba(108,140,255,0.45)}
 .heat-cell.l3{background:rgba(108,140,255,0.72);border-color:rgba(108,140,255,0.6)}
@@ -298,9 +303,9 @@ select.input{cursor:pointer}
 /* ---------- ACHIEVEMENTS ---------- */
 .ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
 .ach{background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);padding:20px 16px;
-  text-align:center;transition:.2s;opacity:.55;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  text-align:center;transition:border-color .2s;opacity:.55}
 .ach.unlocked{opacity:1;border-color:rgba(108,140,255,0.35);
-  box-shadow:0 0 0 1px rgba(108,140,255,0.15),0 10px 24px rgba(108,140,255,0.12)}
+  box-shadow:0 0 0 1px rgba(108,140,255,0.15)}
 .ach-icon{font-size:32px;margin-bottom:10px}
 .ach-name{font-size:13.5px;font-weight:700;margin-bottom:4px}
 .ach-desc{font-size:11.5px;color:var(--text-faint);line-height:1.4}
@@ -315,9 +320,9 @@ select.input{cursor:pointer}
 
 /* ---------- TOAST ---------- */
 .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);
-  background:var(--glass-2);border:1px solid var(--border-2);color:var(--text);padding:12px 22px;border-radius:13px;
-  font-size:13.5px;font-weight:600;box-shadow:var(--shadow);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .3s;z-index:1000;
+  background:var(--panel);border:1px solid var(--border-2);color:var(--text);padding:12px 22px;border-radius:13px;
+  font-size:13.5px;font-weight:600;box-shadow:var(--shadow);
+  opacity:0;pointer-events:none;transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .28s;z-index:1000;
   max-width:90vw;text-align:center}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
@@ -340,6 +345,10 @@ select.input{cursor:pointer}
   .user-grid{grid-template-columns:1fr 1fr}
   .login-card{padding:28px 20px 22px}.login-title{font-size:21px}
   .login-logo{width:64px;height:64px;font-size:32px}
+}
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
 }
 </style>
 </head>
@@ -549,6 +558,7 @@ function getStorageKey(userId){ return STORAGE_PREFIX + (userId||'_anon') + '_v1
 function slugify(name){ return String(name).toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
 function nameToColor(name){ let h=0; for(let i=0;i<name.length;i++) h = name.charCodeAt(i) + ((h<<5)-h); return 'hsl('+(Math.abs(h)%360)+', 62%, 55%)'; }
 function initials(name){ const p=String(name).trim().split(/\s+/); if(p.length>=2) return (p[0][0]+p[1][0]).toUpperCase(); return (name||'?').substring(0,2).toUpperCase(); }
+function setText(id, val){ const el = $(id); if(el) el.textContent = val; }
 
 /* -------- Firebase error formatter -------- */
 function formatFirebaseError(e){
@@ -620,7 +630,7 @@ function queueFirestoreSave(){
       console.warn('Firestore save failed:', e);
       setSyncStatus('error', 'Sync failed');
     }
-  }, 900);
+  }, 1200);
 }
 
 function save(){
@@ -629,7 +639,7 @@ function save(){
   catch(e){ console.warn('Local save failed', e); }
   queueFirestoreSave();
 }
-function saveDebounced(){ clearTimeout(saveTimer); saveTimer = setTimeout(save, 350); }
+function saveDebounced(){ clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); }
 
 /* ============================================================
    TOPIC HELPERS
@@ -770,9 +780,9 @@ function checkAchievements(stats, study, streaks){
 /* ============================================================
    UI HELPERS
 ============================================================ */
-function statCard(icon, label, value, sub){
+function statCard(icon, label, value, sub, id){
   return '<div class="stat-card"><div class="stat-icon">'+icon+'</div>' +
-    '<div class="stat-value">'+value+'</div>' +
+    '<div class="stat-value"'+(id ? ' id="'+id+'"' : '')+'>'+value+'</div>' +
     '<div class="stat-label">'+label+'</div>' +
     (sub ? '<div class="stat-sub">'+sub+'</div>' : '') + '</div>';
 }
@@ -798,6 +808,48 @@ function updateUserBadge(){
 }
 
 /* ============================================================
+   LIVE (NO-RE-RENDER) STAT REFRESH
+   Keeps the UI in sync after a checkbox / select change without
+   rebuilding the whole page. This is what removes the jank.
+============================================================ */
+function refreshLiveStats(sid){
+  const stats = getStats();
+  const study = getStudy();
+  const streaks = getStreaks();
+
+  setText('side-pct', stats.progressPct.toFixed(0)+'%');
+  const sf = $('side-fill');
+  if(sf) sf.style.width = stats.progressPct+'%';
+
+  if(sid){
+    const subj = SUBJECTS.find(s=>s.id===sid);
+    const p = stats.per[sid];
+    setText('subj-pct', p.pct.toFixed(0)+'%');
+    const fl = $('subj-fill'); if(fl) fl.style.width = p.pct+'%';
+    setText('subj-done', p.done);
+    setText('subj-rem', subj.chapters.length - p.done);
+    setText('subj-rev', p.revPct.toFixed(0)+'%');
+    setText('subj-sub', p.done+' of '+subj.chapters.length+' chapters completed');
+  }
+
+  if($('rev-pct')){
+    setText('rev-pct', stats.revPct.toFixed(1)+'%');
+    setText('rev-done', stats.revDone);
+    setText('rev-pending', stats.revTotal - stats.revDone);
+    SUBJECTS.forEach(s=>{
+      const el = document.querySelector('[data-revcount="'+s.id+'"]');
+      if(el){
+        const p = stats.per[s.id];
+        el.textContent = p.revDone+'/'+p.revTotal+' • '+p.revPct.toFixed(0)+'%';
+      }
+    });
+  }
+
+  const newly = checkAchievements(stats, study, streaks);
+  newly.forEach(a => showToast(a.icon+' Achievement unlocked: '+a.name));
+}
+
+/* ============================================================
    OFFLINE MODE
 ============================================================ */
 function setOfflineMode(enabled){
@@ -816,7 +868,6 @@ function setOfflineMode(enabled){
 async function fetchUsers(){
   const result = { users: [], firebaseError: null, source: 'firebase' };
 
-  // 1) Try Firestore first (unless offline mode)
   if (!offlineMode && firebaseReady && db) {
     try {
       const snap = await db.collection('users').get();
@@ -837,7 +888,6 @@ async function fetchUsers(){
     result.source = 'offline';
   }
 
-  // 2) Fall back to local cache
   try {
     const raw = localStorage.getItem(USERS_CACHE_KEY);
     if (raw) {
@@ -853,7 +903,6 @@ function renderUserGrid(users, firebaseError){
   const grid = $('userGrid');
   const msg = $('loginMsg');
 
-  // Warning / error banner
   if (firebaseError) {
     msg.style.display = 'block';
     msg.className = 'login-msg warning';
@@ -870,7 +919,6 @@ function renderUserGrid(users, firebaseError){
     msg.innerHTML = '';
   }
 
-  // Offline banner toggle
   const banner = $('offlineBanner');
   if (banner) {
     banner.style.display = offlineMode ? 'flex' : 'none';
@@ -922,7 +970,6 @@ async function loginUser(userId){
 
   let data = null, name = null;
 
-  // Try Firestore (unless offline)
   if (!offlineMode && firebaseReady && db) {
     try {
       const doc = await db.collection('users').doc(userId).get();
@@ -936,7 +983,6 @@ async function loginUser(userId){
     }
   }
 
-  // Fallback to local
   if (!data) {
     try {
       const raw = localStorage.getItem(getStorageKey(userId));
@@ -971,7 +1017,6 @@ async function loginUser(userId){
   render();
 }
 
-/* ---------- Local-first profile creation ---------- */
 async function createNewUser(name){
   const trimmed = String(name||'').trim();
   if(!trimmed) throw new Error('Please enter a name');
@@ -979,14 +1024,12 @@ async function createNewUser(name){
   const id = slugify(trimmed);
   if(!id) throw new Error('Invalid name');
 
-  // 1) Check local cache for duplicates
   let users = [];
   try { users = JSON.parse(localStorage.getItem(USERS_CACHE_KEY) || '[]'); } catch(e){}
   if (users.find(u => u.id === id)) throw new Error('A profile with this name already exists');
 
   const localState = defaultState();
 
-  // 2) Always save locally first
   try {
     localStorage.setItem(getStorageKey(id), JSON.stringify(localState));
     users.push({ id, name: trimmed });
@@ -997,7 +1040,6 @@ async function createNewUser(name){
     throw new Error('Could not save locally — browser storage may be full or blocked');
   }
 
-  // 3) Try to sync to Firebase (best effort)
   let syncStatus = 'local';
   let syncError = null;
 
@@ -1006,7 +1048,6 @@ async function createNewUser(name){
       const ref = db.collection('users').doc(id);
       const doc = await ref.get();
       if (doc.exists) {
-        // Profile already exists in Firestore — accept it (data merge will happen on login)
         syncStatus = 'existing';
       } else {
         await ref.set({
@@ -1031,7 +1072,6 @@ async function createNewUser(name){
 function logout(){
   if(!confirm('Switch to another profile? Your current progress is saved.')) return;
 
-  // Force-save current state
   if(currentUser){
     try{ localStorage.setItem(getStorageKey(currentUser.id), JSON.stringify(state)); }catch(e){}
     if(!offlineMode && firebaseReady && db){
@@ -1076,7 +1116,6 @@ async function handleCreateNewUser(){
     const result = await createNewUser(name);
     hideNewUserModal();
 
-    // Refresh user grid
     try{
       const fresh = await fetchUsers();
       renderUserGrid(fresh.users, fresh.firebaseError);
@@ -1113,7 +1152,6 @@ async function initLogin(){
   const msg = $('loginMsg');
   if(msg){ msg.style.display = 'none'; msg.textContent = ''; }
 
-  // Wire once
   if(!initLogin._wired){
     initLogin._wired = true;
     $('addUserBtn').addEventListener('click', showNewUserModal);
@@ -1160,7 +1198,7 @@ function navigate(page){
 }
 
 /* ============================================================
-   PAGE RENDERERS (compact versions - same as before)
+   PAGE RENDERERS
 ============================================================ */
 function dashboardHTML(stats, study, streaks){
   const today = new Date(); today.setHours(0,0,0,0);
@@ -1244,13 +1282,13 @@ function subjectHTML(subj, stats){
   const filterVal = ui.filter[subj.id] || 'all';
   return '<div class="page-head"><div><div class="page-title">' +
     '<span class="page-icon" style="background:'+hexA(subj.color,0.16)+';color:'+subj.color+'">'+subj.icon+'</span>'+subj.name+'</div>' +
-    '<div class="page-sub">'+p.done+' of '+subj.chapters.length+' chapters completed</div></div></div>' +
+    '<div class="page-sub" id="subj-sub">'+p.done+' of '+subj.chapters.length+' chapters completed</div></div></div>' +
   '<div class="card subject-summary">' +
-    '<div class="progress-wrap"><div class="progress-label"><span>Subject Progress</span><b>'+p.pct.toFixed(0)+'%</b></div>' +
-    '<div class="progress-track"><div class="progress-fill" style="width:'+p.pct+'%;background:linear-gradient(90deg,'+subj.color+','+hexA(subj.color,0.6)+')"></div></div></div>' +
-    '<div class="mini-stats"><div><span>'+p.done+'</span><small>Completed</small></div>' +
-    '<div><span>'+(subj.chapters.length-p.done)+'</span><small>Remaining</small></div>' +
-    '<div><span>'+p.revPct.toFixed(0)+'%</span><small>Revision</small></div></div></div>' +
+    '<div class="progress-wrap"><div class="progress-label"><span>Subject Progress</span><b id="subj-pct">'+p.pct.toFixed(0)+'%</b></div>' +
+    '<div class="progress-track"><div class="progress-fill" id="subj-fill" style="width:'+p.pct+'%;background:linear-gradient(90deg,'+subj.color+','+hexA(subj.color,0.6)+')"></div></div></div>' +
+    '<div class="mini-stats"><div><span id="subj-done">'+p.done+'</span><small>Completed</small></div>' +
+    '<div><span id="subj-rem">'+(subj.chapters.length-p.done)+'</span><small>Remaining</small></div>' +
+    '<div><span id="subj-rev">'+p.revPct.toFixed(0)+'%</span><small>Revision</small></div></div></div>' +
   '<div class="toolbar"><input class="input search" data-action="ch-search" data-sid="'+subj.id+'" placeholder="🔍 Search chapters…" value="'+esc(searchVal)+'">' +
     '<select class="input filter" data-action="ch-filter" data-sid="'+subj.id+'"><option value="all"'+(filterVal==='all'?' selected':'')+'>All Chapters</option>' +
       STATUS.map(s=>'<option value="'+s.v+'"'+(filterVal===String(s.v)?' selected':'')+'>'+s.icon+' '+s.label+'</option>').join('') +
@@ -1304,13 +1342,13 @@ function revisionHTML(stats){
   return '<div class="page-head"><div><div class="page-title">📚 Revision Tracker</div>' +
     '<div class="page-sub">Three revisions + PYQ for every chapter.</div></div></div>' +
   '<div class="stat-grid">' +
-    statCard('🔄','Revision Completion', stats.revPct.toFixed(1)+'%', 'across all chapters') +
-    statCard('✅','Revisions Done', stats.revDone, 'of '+stats.revTotal+' checks') +
-    statCard('⏳','Pending Revisions', stats.revTotal-stats.revDone, 'keep going') + '</div>' +
+    statCard('🔄','Revision Completion', stats.revPct.toFixed(1)+'%', 'across all chapters', 'rev-pct') +
+    statCard('✅','Revisions Done', stats.revDone, 'of '+stats.revTotal+' checks', 'rev-done') +
+    statCard('⏳','Pending Revisions', stats.revTotal-stats.revDone, 'keep going', 'rev-pending') + '</div>' +
   SUBJECTS.map(s=>{
     const p = stats.per[s.id];
     return '<div class="card rev-subject"><div class="card-head"><h3>'+s.icon+' '+s.name+'</h3>' +
-      '<span class="muted">'+p.revDone+'/'+p.revTotal+' • '+p.revPct.toFixed(0)+'%</span></div>' +
+      '<span class="muted" data-revcount="'+s.id+'">'+p.revDone+'/'+p.revTotal+' • '+p.revPct.toFixed(0)+'%</span></div>' +
       s.chapters.map((c,i)=>{
         const d = getCh(s.id,i);
         return '<div class="rev-row"><span class="rev-name">'+esc(c)+'</span><div class="rev-checks">' +
@@ -1403,6 +1441,7 @@ function afterAnalytics(stats, study){
   Chart.defaults.borderColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(20,35,70,0.08)';
   Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
   Chart.defaults.font.size = 11.5;
+  Chart.defaults.animation = { duration: 450 };
   const labels = SUBJECTS.map(s=>s.name);
   const colors = SUBJECTS.map(s=>s.color);
   const grid = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(20,35,70,0.08)';
@@ -1539,7 +1578,6 @@ function settingsHTML(){
 ============================================================ */
 function render(){
   if(!currentUser) return;
-  const y = window.scrollY;
   const stats = getStats();
   const study = getStudy();
   const streaks = getStreaks();
@@ -1571,7 +1609,6 @@ function render(){
   if(['physics','chemistry','maths','biology'].indexOf(currentPage) !== -1) filterChapters(currentPage);
 
   updateNav();
-  window.scrollTo(0, y);
 }
 
 /* ============================================================
@@ -1600,14 +1637,28 @@ view.addEventListener('submit', e=>{
 
 view.addEventListener('change', e=>{
   const t = e.target, action = t.dataset.action;
+
+  /* --- Chapter status: update in place, no re-render --- */
   if(action === 'ch-status'){
-    getCh(t.dataset.sid, Number(t.dataset.idx)).status = Number(t.value);
-    save(); render(); return;
+    const sid = t.dataset.sid, idx = Number(t.dataset.idx);
+    getCh(sid, idx).status = Number(t.value);
+    const st = STATUS[Number(t.value)];
+    t.style.color = st.color;
+    t.style.borderColor = hexA(st.color, 0.35);
+    save();
+    refreshLiveStats(sid);
+    if(ui.filter[sid] && ui.filter[sid] !== 'all') filterChapters(sid);
+    return;
   }
+
+  /* --- Revision checkbox: update in place, no re-render --- */
   if(action === 'ch-rev'){
     getCh(t.dataset.sid, Number(t.dataset.idx)).rev[Number(t.dataset.rev)] = t.checked;
-    save(); render(); return;
+    save();
+    refreshLiveStats(t.dataset.sid);
+    return;
   }
+
   if(action === 'ch-filter'){ ui.filter[t.dataset.sid] = t.value; filterChapters(t.dataset.sid); return; }
   if(action === 'goal-date'){ goalDate = t.value || todayStr(); render(); return; }
   if(action === 'start-date'){ if(t.value){ state.startDate = t.value; save(); render(); } return; }
